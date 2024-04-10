@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1712532652228,
+      "tag": "0000_swift_roxanne_simpson",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1712747823537,
+      "tag": "0001_sweet_obadiah_stane",
+      "breakpoints": true
+    }
+  ]
+}

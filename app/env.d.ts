@@ -5,5 +5,7 @@ declare module 'bun' {
     DB_HOST: string;
     DB_PORT: number;
     DB_URL: string;
+
+    JWT_SECRET: string;
   }
 }

@@ -2,13 +2,14 @@
   "scripts": {
     "dev": "bun --hot run src/index.ts",
     "format": "prettier --config ../.prettierrc --write .",
-    "migration:generate": "drizzle-kit generate:pg --config=drizzle.config.ts",
-    "migration:drop": "drizzle-kit drop:pg --config=drizzle.config.ts",
-    "db:push": "drizzle-kit push:pg --config=drizzle.config.ts",
+    "migration:generate": "drizzle-kit generate:pg",
+    "migration:drop": "drizzle-kit drop:pg",
+    "db:push": "drizzle-kit push:pg",
     "studio": "drizzle-kit studio"
   },
   "dependencies": {
     "drizzle-orm": "^0.30.7",
+    "drizzle-zod": "^0.5.1",
     "hono": "^4.2.2",
     "http-status-codes": "^2.3.0",
     "pg": "^8.11.5",
