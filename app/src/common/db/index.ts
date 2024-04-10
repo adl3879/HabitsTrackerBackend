@@ -1,5 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Client } from 'pg';
+
 import logger from '@/common/utils/logger';
 
 const client = new Client({

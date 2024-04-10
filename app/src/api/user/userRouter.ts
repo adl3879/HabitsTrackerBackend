@@ -17,9 +17,15 @@ user.post('/register', async (c) => {
     name: body.name as string,
     email: body.email as string,
     password: body.password as string,
-    role: 'admin',
+    role: 'user',
   } satisfies InsertUser;
   const serviceResponse = await userService.registerUser(user);
+  return c.json(serviceResponse, serviceResponse.statusCode);
+});
+
+user.post('/login', async (c) => {
+  const body = await c.req.parseBody();
+  const serviceResponse = await userService.loginUser(body.email as string, body.password as string);
   return c.json(serviceResponse, serviceResponse.statusCode);
 });
 

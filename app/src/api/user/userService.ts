@@ -27,9 +27,14 @@ export const userService = {
     }
   },
 
-  // register user
   registerUser: async (user: InsertUser): Promise<ServiceResponse<{ token: string } | null>> => {
     try {
+      // check if user already exists
+      const existingUser = await userRepository.findByEmail(user.email);
+      if (existingUser.length > 0) {
+        return new ServiceResponse(ResponseStatus.Failed, 'User already exists', null, StatusCodes.CONFLICT);
+      }
+
       // hash password
       const password = await Bun.password.hash(user.password, {
         algorithm: 'bcrypt',
@@ -39,6 +44,7 @@ export const userService = {
 
       await userRepository.insertUser(user);
 
+      // generate token
       const payload = {
         sub: user.email,
         role: user.role,
@@ -52,6 +58,41 @@ export const userService = {
       return new ServiceResponse(
         ResponseStatus.Failed,
         'Failed to register user',
+        null,
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  },
+
+  loginUser: async (email: string, password: string): Promise<ServiceResponse<{ token: string } | null>> => {
+    try {
+      // check if user already exists
+      const existingUser = await userRepository.findByEmail(email);
+      if (existingUser.length < 0) {
+        return new ServiceResponse(ResponseStatus.Failed, 'User does not exists', null, StatusCodes.CONFLICT);
+      }
+
+      // compare password
+      const user = existingUser[0];
+      const passwordMatch = await Bun.password.verify(password, user.password);
+      if (!passwordMatch) {
+        return new ServiceResponse(ResponseStatus.Failed, 'Invalid credentials', null, StatusCodes.UNAUTHORIZED);
+      }
+
+      // generate token
+      const payload = {
+        sub: user.email,
+        role: user.role,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60, // Token expires in 60 minutes
+      };
+      const token = await sign(payload, process.env.JWT_SECRET as string);
+
+      return new ServiceResponse(ResponseStatus.Success, 'User registered', { token }, StatusCodes.CREATED);
+    } catch (e) {
+      logger.error('Failed to login user', e);
+      return new ServiceResponse(
+        ResponseStatus.Failed,
+        'Failed to login user',
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
