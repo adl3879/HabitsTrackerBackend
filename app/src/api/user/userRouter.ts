@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 
-import { InsertUser } from '@/common/db/schema/user';
+import { InsertUser, insertUserSchema } from '@/common/db/schema/user';
+import { validator } from '@/common/utils/validator';
 
 import { userService } from './userService';
 
@@ -11,8 +12,8 @@ user.get('/', async (c) => {
   return c.json(serviceResponse, serviceResponse.statusCode);
 });
 
-user.post('/register', async (c) => {
-  const body = await c.req.parseBody();
+user.post('/register', validator(insertUserSchema), async (c) => {
+  const { body } = c.req.valid('form');
   const user = {
     name: body.name as string,
     email: body.email as string,
@@ -23,7 +24,7 @@ user.post('/register', async (c) => {
   return c.json(serviceResponse, serviceResponse.statusCode);
 });
 
-user.post('/login', async (c) => {
+user.post('/login', validator(insertUserSchema.pick({ email: true, password: true })), async (c) => {
   const body = await c.req.parseBody();
   const serviceResponse = await userService.loginUser(body.email as string, body.password as string);
   return c.json(serviceResponse, serviceResponse.statusCode);

@@ -7,7 +7,9 @@ const client = new Client({
   connectionString: process.env.DB_URL,
 });
 
-await client.connect();
+(async function () {
+  await client.connect();
+})();
 logger.info('Connected to database');
 
 const db = drizzle(client);

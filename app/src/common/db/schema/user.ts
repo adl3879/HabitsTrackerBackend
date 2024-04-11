@@ -1,6 +1,5 @@
 import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { z } from 'zod';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -14,9 +13,15 @@ export const users = pgTable('users', {
 export const selectUserSchema = createSelectSchema(users);
 
 export const insertUserSchema = createInsertSchema(users, {
-  id: (schema) => schema.id.positive(),
-  email: (schema) => schema.email.email(),
-  role: z.string(),
+  email: (schema) =>
+    schema.email.email({
+      message: 'Invalid email address',
+    }),
+  password: (schema) =>
+    schema.password.min(8, {
+      message: 'Password must be at least 8 characters long',
+    }),
+  role: (schema) => schema.role.default('user'),
 });
 
 export type User = typeof users.$inferSelect;

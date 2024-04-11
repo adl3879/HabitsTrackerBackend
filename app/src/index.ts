@@ -13,7 +13,9 @@ app.use('*', honoLogger());
 // Routes
 app.route('/user', userRouter);
 
-await migrate(db, { migrationsFolder: './drizzle/migrations' });
+(async function () {
+  await migrate(db, { migrationsFolder: './drizzle/migrations' });
+})();
 
 logger.info('Server is running on port 3000');
 export default {
