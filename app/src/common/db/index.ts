@@ -9,8 +9,8 @@ const client = new Client({
 
 (async function () {
   await client.connect();
+  logger.info('Connected to database');
 })();
-logger.info('Connected to database');
 
 const db = drizzle(client);
 export default db;
